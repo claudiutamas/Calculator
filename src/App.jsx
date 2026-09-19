@@ -11,7 +11,7 @@ export const ACTIONS = {
   EVALUATE: 'evaluate'
 }
 
-function reducer(state, { type, payload }) {
+export function reducer(state, { type, payload }) {
   switch(type){
     case ACTIONS.ADD_DIGIT:
       if (state.overwrite) {  // clear after '=' operand
@@ -80,7 +80,7 @@ function reducer(state, { type, payload }) {
       }
 
       if (state.currentOperand == null) return state
-      if (state.currentOperand.lenght === 1) {
+      if (state.currentOperand.length === 1) {
         return {...state, currentOperand: null}
       }
 

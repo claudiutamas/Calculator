@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import DigitButton from "./DigitButton";
 import OperationButton from "./OperationButton";
 import "./styles.css"
@@ -141,6 +141,58 @@ function App() {
      dispatch] = useReducer( reducer, {
        previousOperand: null, operation: null,
        currentOperand: "0"})
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (/^\d$/.test(event.key)) {
+        event.preventDefault();
+        dispatch({ type: ACTIONS.ADD_DIGIT, payload: { digit: event.key } });
+        return;
+      }
+
+      if (event.key === "." || event.key === ",") {
+        event.preventDefault();
+        dispatch({ type: ACTIONS.ADD_DIGIT, payload: { digit: "." } });
+        return;
+      }
+
+      const operationByKey = {
+        "+": "+",
+        "-": "-",
+        "*": "*",
+        "/": "÷",
+      };
+
+      if (operationByKey[event.key]) {
+        event.preventDefault();
+        dispatch({
+          type: ACTIONS.CHOOSE_OPERATION,
+          payload: { operation: operationByKey[event.key] },
+        });
+        return;
+      }
+
+      if (event.key === "Enter" || event.key === "=") {
+        event.preventDefault();
+        dispatch({ type: ACTIONS.EVALUATE });
+        return;
+      }
+
+      if (event.key === "Backspace" || event.key === "Delete") {
+        event.preventDefault();
+        dispatch({ type: ACTIONS.DELETE_DIGIT });
+        return;
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        dispatch({ type: ACTIONS.CLEAR });
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <div className="calculator-grid">
